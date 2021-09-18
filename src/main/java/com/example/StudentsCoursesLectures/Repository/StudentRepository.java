@@ -11,6 +11,7 @@ import java.util.List;
 
 import static com.example.StudentsCoursesLectures.Repository.CourseRepository.getCourse;
 import static com.example.StudentsCoursesLectures.Repository.LectureRepository.getLecture;
+import static com.example.StudentsCoursesLectures.Repository.LectureRepository.incrementLectureCapacity;
 
 @Repository
 public class StudentRepository {
@@ -123,7 +124,7 @@ public class StudentRepository {
             ArrayList<Integer> grades = new ArrayList<>();
 
             while (resultSet.next())
-                grades.add(resultSet.getInt(1));
+                if(resultSet.getInt(1) > 5) grades.add(resultSet.getInt(1));
 
             return grades;
         }
@@ -164,5 +165,35 @@ public class StudentRepository {
     }
 
 
+    public void addStudentToClass(int studentId, int courseId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+
+            String query = "INSERT INTO students.students_courses VALUES (" + studentId + ", " + courseId + ", " + "3)";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+            incrementCourseCapacity(courseId);
+        }
+    }
+
+    public void addStudentToLecture(int studentId, int lectureId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+
+            String query = "INSERT INTO students.students_lectures VALUES (" + studentId + ", " + lectureId + ")";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+            incrementLectureCapacity(lectureId);
+        }
+    }
+
+    public boolean isStudentInCourse(int studentId, int courseId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM students.students_courses WHERE id_students="
+                    + studentId + " AND id_courses=" + courseId);
+            return resultSet.next();
+        }
+    }
 }
 

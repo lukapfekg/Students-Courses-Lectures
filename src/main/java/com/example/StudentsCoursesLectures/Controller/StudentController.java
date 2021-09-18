@@ -37,6 +37,11 @@ public class StudentController {
         return studentService.getLecturesOfStudent(studentId);
     }
 
+    @GetMapping(path = "/{studentId}/average-grade")
+    public double averageGrade(@PathVariable int studentId) throws SQLException {
+        return studentService.getAverageGrade(studentId);
+    }
+
     @PostMapping(path = "/{studentId}/course/{courseId}")
     public void gradeStudent(@PathVariable int studentId, @PathVariable int courseId, @RequestBody Map<String, String> body) throws SQLException {
         studentService.gradeStudent(studentId, courseId, Integer.parseInt(body.get("grade")));
@@ -48,5 +53,9 @@ public class StudentController {
         studentService.addStudent(student);
     }
 
+    @PostMapping(path = "/add-to-course")
+    public void addStudentToClass(@RequestBody Map<String, String> body) throws SQLException {
+        studentService.addStudentToClass(Integer.parseInt(body.get("studentId")), Integer.parseInt(body.get("courseId")));
+    }
 
 }

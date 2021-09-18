@@ -14,10 +14,10 @@ public class Course {
         this.numberOfStudents = numberOfStudents;
     }
 
-    public Course(String courseName, int maxNumberOfStudents, int numberOfStudents) {
+    public Course(String courseName, int maxNumberOfStudents) {
         this.courseName = courseName;
         this.maxNumberOfStudents = maxNumberOfStudents;
-        this.numberOfStudents = numberOfStudents;
+        this.numberOfStudents = 0;
     }
 
     public int getID() {
@@ -34,6 +34,10 @@ public class Course {
 
     public int getNumberOfStudents() {
         return numberOfStudents;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

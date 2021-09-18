@@ -13,7 +13,8 @@ import static com.example.StudentsCoursesLectures.Repository.StudentRepository.g
 
 @Repository
 public class CourseRepository {
-    String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
+    private static final String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
+    //String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
 
 
     public ArrayList<Course> printAllCourses() throws SQLException {
@@ -42,6 +43,33 @@ public class CourseRepository {
             String query = "INSERT INTO students.courses VALUES (DEFAULT, '" + course.getCourseName() + "', " + course.getMaxNumberOfStudents() + ", " + course.getNumberOfStudents() + ")";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.execute();
+            course.setId(getCourseId(course.getCourseName()));
+            createLecturesForCourse(course);
+        }
+    }
+
+    private int getCourseId(String courseName)throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+
+            ResultSet resultSet = statement.executeQuery("SELECT id FROM students.courses WHERE course_name='" + courseName + "'");
+
+            resultSet.next();
+            return resultSet.getInt(1);
+        }
+    }
+
+    private void createLecturesForCourse(Course course) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+
+            int maxNumOfStudents = course.getMaxNumberOfStudents() / 3;
+
+            for (int i = 1; i < 4; i++) {
+                String query = "INSERT INTO students.lectures VALUES (DEFAULT, '" + course.getCourseName() + " L" + i + "', " + maxNumOfStudents + ", " + 0 + ", " + course.getID() + ")";
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                preparedStatement.execute();
+            }
         }
     }
 
@@ -123,12 +151,24 @@ public class CourseRepository {
         return getLecture(lectureID, connectionString);
     }
 
-    private void incrementCourseCapacity(int courseId) throws SQLException {
+    public static void incrementCourseCapacity(int courseId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
             String query = "UPDATE students.courses SET num_of_students=num_of_students+1 WHERE id=" + courseId;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.execute();
+        }
+    }
+
+    public static boolean isCourseFull(int courseID) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery("SELECT max_num_of_students, num_of_students FROM students.courses WHERE id=" + courseID);
+
+            resultSet.next();
+            int maxNumOfStudents = resultSet.getInt(1);
+            int numOfStudents = resultSet.getInt(2);
+            return maxNumOfStudents == numOfStudents;
         }
     }
 

@@ -13,7 +13,7 @@ import static com.example.StudentsCoursesLectures.Repository.StudentRepository.g
 
 @Repository
 public class LectureRepository {
-    String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
+    private static String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
 
     public ArrayList<Lecture> printAllLectures() throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
@@ -71,17 +71,7 @@ public class LectureRepository {
         }
     }
 
-    public void incrementLectureCapacity(int lectureID) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
-            int numOfStudents = getNumberOfStudentsInLecture(lectureID);
-            numOfStudents++;
 
-            String query = "UPDATE students.lectures SET num_of_students=" + numOfStudents + " WHERE id=" + lectureID;
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.execute();
-        }
-    }
 
     private void decrementLectureCapacity(int lectureID) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
@@ -183,7 +173,25 @@ public class LectureRepository {
         }
     }
 
+    public static int getFreeLectureFromCourse(int courseId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery("SELECT id, max_num_of_students, num_of_students FROM students.lectures WHERE course_id=" + courseId);
+            while (resultSet.next()) {
+                if (resultSet.getInt(2) > resultSet.getInt(3)) return resultSet.getInt(1);
+            }
+        }
+        return -1;
+    }
 
+    public static void incrementLectureCapacity(int lectureId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+            String query = "UPDATE students.lectures SET num_of_students=num_of_students+1 WHERE id=" + lectureId;
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+        }
+    }
 
 
 }
