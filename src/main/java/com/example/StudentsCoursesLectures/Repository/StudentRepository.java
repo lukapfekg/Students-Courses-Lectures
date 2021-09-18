@@ -1,8 +1,8 @@
 package com.example.StudentsCoursesLectures.Repository;
 
 import com.example.StudentsCoursesLectures.Model.Course;
+import com.example.StudentsCoursesLectures.Model.Lecture;
 import com.example.StudentsCoursesLectures.Model.Student;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.StudentsCoursesLectures.Repository.CourseRepository.getCourse;
+import static com.example.StudentsCoursesLectures.Repository.LectureRepository.getLecture;
 
 @Repository
 public class StudentRepository {
@@ -66,18 +67,12 @@ public class StudentRepository {
         }
     }
 
-    public void addStudentToClass(Student student, Course course) throws SQLException {
+    private void incrementCourseCapacity(int courseId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
-
-            String query = "INSERT INTO students.students_courses VALUES (" + student.getId() + ", " + course.getID() + ", " + "3)";
+            String query = "UPDATE students.courses SET num_of_students=num_of_students+1 WHERE id=" + courseId;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.execute();
-
-            /*incrementCourseCapacity(course.getID());
-            course.incrementNumOfStudents();
-
-            addStudentToLecture(student, course);*/
         }
     }
 
@@ -89,26 +84,6 @@ public class StudentRepository {
             return resultSet.next();
         }
     }
-
-    public ArrayList<Course> getAllCoursesFromStudent(Student student) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
-
-            ResultSet resultSet = statement.executeQuery("SELECT id_courses FROM students.students_courses WHERE id_students=" + student.getId());
-            ArrayList<Course> courseList = new ArrayList<>();
-            while (resultSet.next()) {
-                int courseID = resultSet.getInt(1);
-                courseList.add(getCourseAtIndex(courseID));
-            }
-
-            return courseList;
-        }
-    }
-
-    public Course getCourseAtIndex(int courseID) throws SQLException {
-        return getCourse(courseID, connectionString);
-    }
-
 
 
     public ArrayList<Course> getAllCoursesFromStudent(int studentId) throws SQLException {
@@ -124,6 +99,10 @@ public class StudentRepository {
 
             return courseList;
         }
+    }
+
+    public Course getCourseAtIndex(int courseID) throws SQLException {
+        return getCourse(courseID, connectionString);
     }
 
     public void gradeStudentAtCourse(int studentID, int courseID, int grade) throws SQLException {
@@ -168,5 +147,22 @@ public class StudentRepository {
             return new Student(id, firstName, lastName, yearEntered);
         }
     }
+
+    public ArrayList<Lecture> getLecturesOfStudent(int studentId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+
+            ResultSet resultSet = statement.executeQuery("SELECT id_lectures FROM students.students_lectures WHERE id_students=" + studentId);
+            ArrayList<Lecture> courseList = new ArrayList<>();
+            while (resultSet.next()) {
+                int lectureId = resultSet.getInt(1);
+                courseList.add(getLecture(lectureId, connectionString));
+            }
+
+            return courseList;
+        }
+    }
+
+
 }
 

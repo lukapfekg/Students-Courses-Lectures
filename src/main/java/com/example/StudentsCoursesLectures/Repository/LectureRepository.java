@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.sql.*;
 import java.util.ArrayList;
 
+import static com.example.StudentsCoursesLectures.Repository.CourseRepository.getCourse;
+import static com.example.StudentsCoursesLectures.Repository.StudentRepository.getStudent;
+
 @Repository
 public class LectureRepository {
     String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
@@ -58,21 +61,8 @@ public class LectureRepository {
         }
     }
 
-    private boolean isLectureFull(int lectureID) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT max_num_of_students, num_of_students FROM students.lectures WHERE id=" + lectureID);
 
-            while (resultSet.next()) {
-                int maxNumOfStudents = resultSet.getInt(1);
-                int numOfStudents = resultSet.getInt(2);
-                if (maxNumOfStudents == numOfStudents) return true;
-            }
-            return false;
-        }
-    }
-
-    private int getNumberOfStudentsInLecture(int lectureID) throws SQLException {
+    public int getNumberOfStudentsInLecture(int lectureID) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery("SELECT num_of_students FROM students.lectures WHERE id=" + lectureID);
@@ -81,7 +71,7 @@ public class LectureRepository {
         }
     }
 
-    private void incrementLectureCapacity(int lectureID) throws SQLException {
+    public void incrementLectureCapacity(int lectureID) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
             int numOfStudents = getNumberOfStudentsInLecture(lectureID);
@@ -168,6 +158,31 @@ public class LectureRepository {
             return intList;
         }
     }
+
+    public ArrayList<Student> getStudentsFromLecture(int lectureId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery("SELECT id_students FROM students.students_lectures WHERE id_lectures=" + lectureId);
+            ArrayList<Student> lectureList = new ArrayList<>();
+            while (resultSet.next()) {
+                int studentID = resultSet.getInt(1);
+                lectureList.add(getStudent(studentID, connectionString));
+            }
+            return lectureList;
+        }
+    }
+
+
+    public Course getCourseFromLecture(int lectureId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery("SELECT course_id FROM students.lectures WHERE id=" + lectureId);
+            resultSet.next();
+
+            return getCourse(resultSet.getInt(1), connectionString);
+        }
+    }
+
 
 
 

@@ -2,9 +2,9 @@ package com.example.StudentsCoursesLectures.Model;
 
 public class Student {
     private int id;
-    private String FirstName;
-    private String LastName;
-    private String YearEntered;
+    private final String FirstName;
+    private final String LastName;
+    private final String YearEntered;
 
     public Student(int id, String firstName, String lastName, String yearEntered) {
         this.id = id;

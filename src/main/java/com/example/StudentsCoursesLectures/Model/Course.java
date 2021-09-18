@@ -1,10 +1,11 @@
 package com.example.StudentsCoursesLectures.Model;
 
+
 public class Course {
     private int id;
-    private String courseName;
-    private int maxNumberOfStudents;
-    private int numberOfStudents;
+    private final String courseName;
+    private final int maxNumberOfStudents;
+    private final int numberOfStudents;
 
     public Course(int id, String courseName, int maxNumberOfStudents, int numberOfStudents) {
         this.id = id;

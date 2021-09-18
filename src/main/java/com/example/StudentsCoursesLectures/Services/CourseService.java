@@ -25,7 +25,7 @@ public class CourseService {
     }
 
     public void addNewCourse(Course course) throws SQLException {
-        if(courseRepository.doesCourseExist(course)) return;
+        if (courseRepository.doesCourseExist(course)) return;
         courseRepository.addNewCourse(course);
     }
 
@@ -38,9 +38,8 @@ public class CourseService {
     }
 
     public ArrayList<Lecture> getLecturesFromCourse(int courseId) throws SQLException {
-       return courseRepository.getLecturesFromCourse(courseId);
+        return courseRepository.getLecturesFromCourse(courseId);
     }
-
 
 
 }

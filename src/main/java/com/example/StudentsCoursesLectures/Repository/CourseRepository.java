@@ -3,7 +3,6 @@ package com.example.StudentsCoursesLectures.Repository;
 import com.example.StudentsCoursesLectures.Model.Course;
 import com.example.StudentsCoursesLectures.Model.Lecture;
 import com.example.StudentsCoursesLectures.Model.Student;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -15,7 +14,6 @@ import static com.example.StudentsCoursesLectures.Repository.StudentRepository.g
 @Repository
 public class CourseRepository {
     String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
-
 
 
     public ArrayList<Course> printAllCourses() throws SQLException {
@@ -123,6 +121,15 @@ public class CourseRepository {
 
     public Lecture getLectureAtIndex(int lectureID) throws SQLException {
         return getLecture(lectureID, connectionString);
+    }
+
+    private void incrementCourseCapacity(int courseId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+            String query = "UPDATE students.courses SET num_of_students=num_of_students+1 WHERE id=" + courseId;
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+        }
     }
 
 
