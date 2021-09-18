@@ -2,15 +2,19 @@ package com.example.StudentsCoursesLectures.Repository;
 
 import com.example.StudentsCoursesLectures.Model.Course;
 import com.example.StudentsCoursesLectures.Model.Student;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.StudentsCoursesLectures.Repository.CourseRepository.getCourse;
+
 @Repository
 public class StudentRepository {
     String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
+
 
     public List<Student> getAllStudents() throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
@@ -101,6 +105,12 @@ public class StudentRepository {
         }
     }
 
+    public Course getCourseAtIndex(int courseID) throws SQLException {
+        return getCourse(courseID, connectionString);
+    }
+
+
+
     public ArrayList<Course> getAllCoursesFromStudent(int studentId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
@@ -113,21 +123,6 @@ public class StudentRepository {
             }
 
             return courseList;
-        }
-    }
-
-    public Course getCourseAtIndex(int courseID) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
-
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM students.courses WHERE id=" + courseID);
-            resultSet.next();
-            int id = resultSet.getInt(1);
-            String courseName = resultSet.getString(2);
-            int maxNumOfStudents = resultSet.getInt(3);
-            int numOfStudents = resultSet.getInt(4);
-
-            return new Course(id, courseName, maxNumOfStudents, numOfStudents);
         }
     }
 
@@ -155,6 +150,23 @@ public class StudentRepository {
         }
     }
 
+    public Student getStudentAtIndex(int studentID) throws SQLException {
+        return getStudent(studentID, connectionString);
+    }
 
+    static Student getStudent(int studentID, String connectionString) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM students.students WHERE id=" + studentID);
+            resultSet.next();
+            int id = resultSet.getInt(1);
+            String firstName = resultSet.getString(2);
+            String lastName = resultSet.getString(3);
+            String yearEntered = resultSet.getString(4);
+
+            return new Student(id, firstName, lastName, yearEntered);
+        }
+    }
 }
 
