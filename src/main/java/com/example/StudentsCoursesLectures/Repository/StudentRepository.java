@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.StudentsCoursesLectures.Repository.CourseRepository.getCourse;
+import static com.example.StudentsCoursesLectures.Repository.CourseRepository.incrementCourseCapacity;
 import static com.example.StudentsCoursesLectures.Repository.LectureRepository.getLecture;
 import static com.example.StudentsCoursesLectures.Repository.LectureRepository.incrementLectureCapacity;
 
@@ -21,6 +22,7 @@ public class StudentRepository {
     public List<Student> getAllStudents() throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
+
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM students.students");
             List<Student> studentList = new ArrayList<>();
 
@@ -39,8 +41,7 @@ public class StudentRepository {
     }
 
     public void addNewStudent(Student student) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
 
             String query = "INSERT INTO students.students VALUES (DEFAULT, '" + student.getFirstName() + "', '" + student.getLastName() + "', '" + student.getYearEntered() + "')";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -51,41 +52,13 @@ public class StudentRepository {
     public boolean doesStudentExist(Student student) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
+
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM students.students WHERE first_name='"
                     + student.getFirstName() + "' AND last_name='" + student.getLastName() + "' AND year_entered='" + student.getYearEntered() + "'");
 
             return resultSet.next();
         }
     }
-
-    public void addNewStudent(String firstName, String lastName, String yearEntered) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
-
-            String query = "INSERT INTO students.students VALUES (DEFAULT, '" + firstName + "', '" + lastName + "', '" + yearEntered + "')";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.execute();
-        }
-    }
-
-    private void incrementCourseCapacity(int courseId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
-            String query = "UPDATE students.courses SET num_of_students=num_of_students+1 WHERE id=" + courseId;
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.execute();
-        }
-    }
-
-    public boolean isStudentInCourse(Student student, Course course) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM students.students_courses WHERE id_students="
-                    + student.getId() + " AND id_courses=" + course.getID());
-            return resultSet.next();
-        }
-    }
-
 
     public ArrayList<Course> getAllCoursesFromStudent(int studentId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
@@ -103,7 +76,7 @@ public class StudentRepository {
     }
 
     public Course getCourseAtIndex(int courseID) throws SQLException {
-        return getCourse(courseID, connectionString);
+        return getCourse(courseID);
     }
 
     public void gradeStudentAtCourse(int studentID, int courseID, int grade) throws SQLException {
@@ -124,7 +97,7 @@ public class StudentRepository {
             ArrayList<Integer> grades = new ArrayList<>();
 
             while (resultSet.next())
-                if(resultSet.getInt(1) > 5) grades.add(resultSet.getInt(1));
+                if (resultSet.getInt(1) > 5) grades.add(resultSet.getInt(1));
 
             return grades;
         }
@@ -157,17 +130,15 @@ public class StudentRepository {
             ArrayList<Lecture> courseList = new ArrayList<>();
             while (resultSet.next()) {
                 int lectureId = resultSet.getInt(1);
-                courseList.add(getLecture(lectureId, connectionString));
+                courseList.add(getLecture(lectureId));
             }
 
             return courseList;
         }
     }
 
-
     public void addStudentToClass(int studentId, int courseId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
 
             String query = "INSERT INTO students.students_courses VALUES (" + studentId + ", " + courseId + ", " + "3)";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -177,8 +148,7 @@ public class StudentRepository {
     }
 
     public void addStudentToLecture(int studentId, int lectureId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
 
             String query = "INSERT INTO students.students_lectures VALUES (" + studentId + ", " + lectureId + ")";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -190,10 +160,12 @@ public class StudentRepository {
     public boolean isStudentInCourse(int studentId, int courseId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
+
             ResultSet resultSet = statement.executeQuery("SELECT * FROM students.students_courses WHERE id_students="
                     + studentId + " AND id_courses=" + courseId);
             return resultSet.next();
         }
     }
+
 }
 

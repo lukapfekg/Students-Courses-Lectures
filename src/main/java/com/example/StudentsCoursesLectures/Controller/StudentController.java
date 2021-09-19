@@ -27,6 +27,11 @@ public class StudentController {
         return studentService.getStudents();
     }
 
+    @GetMapping(path = "/{studentId}")
+    public Student getStudent(@PathVariable int studentId) throws SQLException {
+        return studentService.getStudent(studentId);
+    }
+
     @GetMapping(path = "/{studentId}/attending-courses")
     public List<Course> getCourses(@PathVariable int studentId) throws SQLException {
         return studentService.getCoursesOfStudent(studentId);

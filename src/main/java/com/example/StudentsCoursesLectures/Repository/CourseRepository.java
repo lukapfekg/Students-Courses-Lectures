@@ -13,13 +13,13 @@ import static com.example.StudentsCoursesLectures.Repository.StudentRepository.g
 
 @Repository
 public class CourseRepository {
-    private static final String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
-    //String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
 
+    private static final String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
 
     public ArrayList<Course> printAllCourses() throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
+
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM students.courses");
             ArrayList<Course> courseList = new ArrayList<>();
 
@@ -37,32 +37,29 @@ public class CourseRepository {
     }
 
     public void addNewCourse(Course course) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
 
             String query = "INSERT INTO students.courses VALUES (DEFAULT, '" + course.getCourseName() + "', " + course.getMaxNumberOfStudents() + ", " + course.getNumberOfStudents() + ")";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.execute();
+
             course.setId(getCourseId(course.getCourseName()));
             createLecturesForCourse(course);
         }
     }
 
-    private int getCourseId(String courseName)throws SQLException {
+    private int getCourseId(String courseName) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
             ResultSet resultSet = statement.executeQuery("SELECT id FROM students.courses WHERE course_name='" + courseName + "'");
-
             resultSet.next();
             return resultSet.getInt(1);
         }
     }
 
     private void createLecturesForCourse(Course course) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
-
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
             int maxNumOfStudents = course.getMaxNumberOfStudents() / 3;
 
             for (int i = 1; i < 4; i++) {
@@ -73,32 +70,21 @@ public class CourseRepository {
         }
     }
 
-    public void addNewCourse(String courseName, int maxNumOfStudents, int numOfStudents) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
-
-            String query = "INSERT INTO students.courses VALUES (DEFAULT, '" + courseName + "', " + maxNumOfStudents + ", " + numOfStudents + ")";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.execute();
-        }
-    }
-
     public boolean doesCourseExist(Course course) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
+
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM students.courses WHERE course_name='"
                     + course.getCourseName() + "'");
-
             return resultSet.next();
         }
     }
 
-
     public Course getCourseAtIndex(int courseID) throws SQLException {
-        return getCourse(courseID, connectionString);
+        return getCourse(courseID);
     }
 
-    static Course getCourse(int courseID, String connectionString) throws SQLException {
+    public static Course getCourse(int courseID) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
@@ -141,19 +127,15 @@ public class CourseRepository {
             ArrayList<Lecture> lectures = new ArrayList<>();
             while (resultSet.next()) {
                 int lectureId = resultSet.getInt(1);
-                lectures.add(getLectureAtIndex(lectureId));
+                lectures.add(getLecture(lectureId));
             }
             return lectures;
         }
     }
 
-    public Lecture getLectureAtIndex(int lectureID) throws SQLException {
-        return getLecture(lectureID, connectionString);
-    }
-
     public static void incrementCourseCapacity(int courseId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+
             String query = "UPDATE students.courses SET num_of_students=num_of_students+1 WHERE id=" + courseId;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.execute();
@@ -163,14 +145,14 @@ public class CourseRepository {
     public static boolean isCourseFull(int courseID) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT max_num_of_students, num_of_students FROM students.courses WHERE id=" + courseID);
 
+            ResultSet resultSet = statement.executeQuery("SELECT max_num_of_students, num_of_students FROM students.courses WHERE id=" + courseID);
             resultSet.next();
+
             int maxNumOfStudents = resultSet.getInt(1);
             int numOfStudents = resultSet.getInt(2);
             return maxNumOfStudents == numOfStudents;
         }
     }
-
 
 }

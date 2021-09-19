@@ -29,7 +29,12 @@ public class StudentService {
         return studentRepository.getAllStudents();
     }
 
+    public Student getStudent(int studentId) throws SQLException {
+        return studentRepository.getStudentAtIndex(studentId);
+    }
+
     public void addStudent(Student student) throws SQLException {
+        if (studentRepository.doesStudentExist(student)) return;
         studentRepository.addNewStudent(student);
     }
 
@@ -58,10 +63,10 @@ public class StudentService {
     public double getAverageGrade(int studentId) throws SQLException {
         ArrayList<Integer> grades = studentRepository.getAllGradesFromStudent(studentId);
         int avg = 0;
-        for(Integer grade : grades) {
+        for (Integer grade : grades) {
             avg += grade;
         }
-        return (double) avg/grades.size();
+        return (double) avg / grades.size();
     }
 
 }
