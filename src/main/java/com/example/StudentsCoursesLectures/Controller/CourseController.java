@@ -48,5 +48,9 @@ public class CourseController {
         courseService.addNewCourse(course);
     }
 
+    @DeleteMapping(path = "/{courseId}")
+    public void deleteCourse(@PathVariable int courseId) throws SQLException {
+        courseService.deleteCourse(courseId);
+    }
 
 }

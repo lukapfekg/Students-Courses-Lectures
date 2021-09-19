@@ -167,5 +167,32 @@ public class StudentRepository {
         }
     }
 
+    public void deleteStudentFromCourses(int studentId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+
+            String query = "DELETE FROM students.students_courses WHERE id_students=" + studentId;
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+        }
+    }
+
+    public void deleteStudentFromLecture(int studentId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+
+            String query = "DELETE FROM students.students_lectures WHERE id_students=" + studentId;
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+        }
+    }
+
+
+    public void deleteStudent(int studentId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+
+            String query = "DELETE FROM students.students WHERE id=" + studentId;
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+        }
+    }
 }
 

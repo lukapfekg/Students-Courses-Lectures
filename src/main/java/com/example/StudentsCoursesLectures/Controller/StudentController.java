@@ -63,4 +63,10 @@ public class StudentController {
         studentService.addStudentToClass(Integer.parseInt(body.get("studentId")), Integer.parseInt(body.get("courseId")));
     }
 
+    @DeleteMapping(path = "/{studentId}")
+    public void deleteStudent(@PathVariable int studentId) throws SQLException {
+        studentService.deleteStudent(studentId);
+    }
+
+
 }

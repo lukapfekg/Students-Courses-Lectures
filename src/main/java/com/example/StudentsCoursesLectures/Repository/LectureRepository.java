@@ -38,7 +38,7 @@ public class LectureRepository {
         }
     }
 
-    private void decrementLectureCapacity(int lectureID) throws SQLException {
+    public static void decrementLectureCapacity(int lectureID) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
 
             String query = "UPDATE students.lectures SET num_of_students=num_of_students-1 WHERE id=" + lectureID;
@@ -154,6 +154,26 @@ public class LectureRepository {
     public static void incrementLectureCapacity(int lectureId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
             String query = "UPDATE students.lectures SET num_of_students=num_of_students+1 WHERE id=" + lectureId;
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+        }
+    }
+
+    public static void deleteLecture(int lectureId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+
+            String query = "DELETE FROM students.lectures WHERE id=" + lectureId;
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+
+            deleteStudentLectureConnection(lectureId);
+        }
+    }
+
+    private static void deleteStudentLectureConnection(int lectureId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+
+            String query = "DELETE FROM students.students_lectures WHERE id_lectures=" + lectureId;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.execute();
         }

@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.StudentsCoursesLectures.Repository.LectureRepository.deleteLecture;
+
 @Service
 public class CourseService {
     private CourseRepository courseRepository;
@@ -42,4 +44,11 @@ public class CourseService {
     }
 
 
+    public void deleteCourse(int courseId) throws SQLException {
+        ArrayList<Lecture> lectures = courseRepository.getLecturesFromCourse(courseId);
+        for (Lecture lecture : lectures) {
+            deleteLecture(lecture.getId());
+        }
+        courseRepository.deleteCourse(courseId);
+    }
 }

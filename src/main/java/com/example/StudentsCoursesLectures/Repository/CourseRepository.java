@@ -142,6 +142,15 @@ public class CourseRepository {
         }
     }
 
+    public static void decrementCourseCapacity(int courseId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+
+            String query = "UPDATE students.courses SET num_of_students=num_of_students-1 WHERE id=" + courseId;
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+        }
+    }
+
     public static boolean isCourseFull(int courseID) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
@@ -152,6 +161,26 @@ public class CourseRepository {
             int maxNumOfStudents = resultSet.getInt(1);
             int numOfStudents = resultSet.getInt(2);
             return maxNumOfStudents == numOfStudents;
+        }
+    }
+
+    public void deleteCourse(int courseId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+
+            String query = "DELETE FROM students.courses WHERE id=" + courseId;
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+
+            deleteStudentCourseConnection(courseId);
+        }
+    }
+
+    public void deleteStudentCourseConnection(int courseId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+
+            String query = "DELETE FROM students.students_courses WHERE id_courses=" + courseId;
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
         }
     }
 

@@ -3,17 +3,17 @@ package com.example.StudentsCoursesLectures.Services;
 import com.example.StudentsCoursesLectures.Model.Course;
 import com.example.StudentsCoursesLectures.Model.Lecture;
 import com.example.StudentsCoursesLectures.Model.Student;
-import com.example.StudentsCoursesLectures.Repository.CourseRepository;
 import com.example.StudentsCoursesLectures.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.StudentsCoursesLectures.Repository.CourseRepository.decrementCourseCapacity;
 import static com.example.StudentsCoursesLectures.Repository.CourseRepository.isCourseFull;
+import static com.example.StudentsCoursesLectures.Repository.LectureRepository.decrementLectureCapacity;
 import static com.example.StudentsCoursesLectures.Repository.LectureRepository.getFreeLectureFromCourse;
 
 @Service
@@ -67,6 +67,23 @@ public class StudentService {
             avg += grade;
         }
         return (double) avg / grades.size();
+    }
+
+    public void deleteStudent(int studentId) throws SQLException {
+        ArrayList<Course> courses = studentRepository.getAllCoursesFromStudent(studentId);
+        for (Course course : courses) {
+            decrementCourseCapacity(course.getID());
+        }
+        studentRepository.deleteStudentFromCourses(studentId);
+
+        ArrayList<Lecture> lectures = studentRepository.getLecturesOfStudent(studentId);
+        for (Lecture lecture : lectures) {
+            decrementLectureCapacity(lecture.getId());
+        }
+        studentRepository.deleteStudentFromLecture(studentId);
+
+        studentRepository.deleteStudent(studentId);
+
     }
 
 }
