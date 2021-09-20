@@ -3,12 +3,15 @@ package com.example.StudentsCoursesLectures.Services;
 import com.example.StudentsCoursesLectures.Model.Course;
 import com.example.StudentsCoursesLectures.Model.Lecture;
 import com.example.StudentsCoursesLectures.Model.Student;
+import com.example.StudentsCoursesLectures.Repository.CourseRepository;
 import com.example.StudentsCoursesLectures.Repository.LectureRepository;
+import com.example.StudentsCoursesLectures.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 
 @Service
@@ -28,16 +31,19 @@ public class LectureService {
         return lectureRepository.getLectureAtIndex(lectureId);
     }
 
-    public ArrayList<Lecture> getLecturesFromStudent(int studentId) throws SQLException {
-        return lectureRepository.getLecturesFromStudent(studentId);
-    }
+    public List<Student> getStudentsFromLecture(int lectureId) throws SQLException {
+        List<Integer> idList = StudentRepository.getStudentsIdFromLecture(lectureId);
+        List<Student> students = new ArrayList<>();
 
-    public ArrayList<Student> getStudentsFromLecture(int lectureId) throws SQLException {
-        return lectureRepository.getStudentsFromLecture(lectureId);
+        for(Integer id : idList){
+            students.add(StudentRepository.getStudentAtIndex(id));
+        }
+
+        return students;
     }
 
     public Course getCourseFromLecture(int lectureId) throws SQLException {
-        return lectureRepository.getCourseFromLecture(lectureId);
+        return CourseRepository.getCourseAtIndex(LectureRepository.getCourseIdFromLecture(lectureId));
     }
 
 

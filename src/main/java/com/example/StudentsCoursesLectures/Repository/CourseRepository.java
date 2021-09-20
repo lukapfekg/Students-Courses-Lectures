@@ -9,7 +9,6 @@ import java.sql.*;
 import java.util.ArrayList;
 
 import static com.example.StudentsCoursesLectures.Repository.LectureRepository.getLecture;
-import static com.example.StudentsCoursesLectures.Repository.StudentRepository.getStudent;
 
 @Repository
 public class CourseRepository {
@@ -42,13 +41,10 @@ public class CourseRepository {
             String query = "INSERT INTO students.courses VALUES (DEFAULT, '" + course.getCourseName() + "', " + course.getMaxNumberOfStudents() + ", " + course.getNumberOfStudents() + ")";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.execute();
-
-            course.setId(getCourseId(course.getCourseName()));
-            createLecturesForCourse(course);
         }
     }
 
-    private int getCourseId(String courseName) throws SQLException {
+    public static int getCourseId(String courseName) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
@@ -58,7 +54,7 @@ public class CourseRepository {
         }
     }
 
-    private void createLecturesForCourse(Course course) throws SQLException {
+    public static void createLecturesForCourse(Course course) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
             int maxNumOfStudents = course.getMaxNumberOfStudents() / 3;
 
@@ -80,11 +76,7 @@ public class CourseRepository {
         }
     }
 
-    public Course getCourseAtIndex(int courseID) throws SQLException {
-        return getCourse(courseID);
-    }
-
-    public static Course getCourse(int courseID) throws SQLException {
+    public static Course getCourseAtIndex(int courseID) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
@@ -99,39 +91,6 @@ public class CourseRepository {
         }
     }
 
-    public ArrayList<Student> getAllStudentsFromCourse(int courseId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
-
-            ResultSet resultSet = statement.executeQuery("SELECT id_students FROM students.students_courses WHERE id_courses=" + courseId);
-
-            ArrayList<Student> studentList = new ArrayList<>();
-            while (resultSet.next()) {
-                int studentID = resultSet.getInt(1);
-                studentList.add(getStudentAtIndex(studentID));
-            }
-
-            return studentList;
-        }
-    }
-
-    private Student getStudentAtIndex(int studentID) throws SQLException {
-        return getStudent(studentID, connectionString);
-    }
-
-    public ArrayList<Lecture> getLecturesFromCourse(int courseId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
-
-            ResultSet resultSet = statement.executeQuery("SELECT id FROM students.lectures WHERE course_id=" + courseId);
-            ArrayList<Lecture> lectures = new ArrayList<>();
-            while (resultSet.next()) {
-                int lectureId = resultSet.getInt(1);
-                lectures.add(getLecture(lectureId));
-            }
-            return lectures;
-        }
-    }
 
     public static void incrementCourseCapacity(int courseId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
@@ -170,17 +129,31 @@ public class CourseRepository {
             String query = "DELETE FROM students.courses WHERE id=" + courseId;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.execute();
-
-            deleteStudentCourseConnection(courseId);
         }
     }
 
-    public void deleteStudentCourseConnection(int courseId) throws SQLException {
+    public static void deleteStudentCourseConnection(int courseId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
 
             String query = "DELETE FROM students.students_courses WHERE id_courses=" + courseId;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.execute();
+        }
+    }
+
+    public static ArrayList<Integer> getCourseIDFromStudent(int studentId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+
+            ResultSet resultSet = statement.executeQuery("SELECT id_courses FROM students.students_courses WHERE id_students=" + studentId);
+            ArrayList<Integer> courseList = new ArrayList<>();
+
+            while (resultSet.next()) {
+                int courseID = resultSet.getInt(1);
+                courseList.add(courseID);
+            }
+
+            return courseList;
         }
     }
 

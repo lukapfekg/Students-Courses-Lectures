@@ -21,7 +21,6 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-
     @GetMapping
     public List<Student> getStudents() throws SQLException {
         return studentService.getStudents();
@@ -67,6 +66,5 @@ public class StudentController {
     public void deleteStudent(@PathVariable int studentId) throws SQLException {
         studentService.deleteStudent(studentId);
     }
-
 
 }

@@ -3,6 +3,8 @@ package com.example.StudentsCoursesLectures.Services;
 import com.example.StudentsCoursesLectures.Model.Course;
 import com.example.StudentsCoursesLectures.Model.Lecture;
 import com.example.StudentsCoursesLectures.Model.Student;
+import com.example.StudentsCoursesLectures.Repository.CourseRepository;
+import com.example.StudentsCoursesLectures.Repository.LectureRepository;
 import com.example.StudentsCoursesLectures.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,11 +12,6 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.example.StudentsCoursesLectures.Repository.CourseRepository.decrementCourseCapacity;
-import static com.example.StudentsCoursesLectures.Repository.CourseRepository.isCourseFull;
-import static com.example.StudentsCoursesLectures.Repository.LectureRepository.decrementLectureCapacity;
-import static com.example.StudentsCoursesLectures.Repository.LectureRepository.getFreeLectureFromCourse;
 
 @Service
 public class StudentService {
@@ -30,7 +27,7 @@ public class StudentService {
     }
 
     public Student getStudent(int studentId) throws SQLException {
-        return studentRepository.getStudentAtIndex(studentId);
+        return StudentRepository.getStudentAtIndex(studentId);
     }
 
     public void addStudent(Student student) throws SQLException {
@@ -39,11 +36,26 @@ public class StudentService {
     }
 
     public List<Course> getCoursesOfStudent(int studentId) throws SQLException {
-        return studentRepository.getAllCoursesFromStudent(studentId);
+        ArrayList<Integer> idList = CourseRepository.getCourseIDFromStudent(studentId);
+        ArrayList<Course> courses = new ArrayList<>();
+
+        for (Integer id : idList) {
+            courses.add(CourseRepository.getCourseAtIndex(id));
+        }
+
+        return courses;
     }
 
     public List<Lecture> getLecturesOfStudent(int studentId) throws SQLException {
-        return studentRepository.getLecturesOfStudent(studentId);
+        List<Integer> lectureIds = LectureRepository.getLecturesIdFromStudent(studentId);
+        List<Lecture> lectures = new ArrayList<>();
+        // ArrayList<Lecture> lectures = lectureIds.stream().forEach(id -> LectureRepository.getLecture(id));
+
+        for (Integer lectureId : lectureIds) {
+            lectures.add(LectureRepository.getLecture(lectureId));
+        }
+
+        return lectures;
     }
 
 
@@ -52,38 +64,39 @@ public class StudentService {
     }
 
     public void addStudentToClass(int studentId, int courseId) throws SQLException {
-        if (isCourseFull(courseId)) return;
+        if (CourseRepository.isCourseFull(courseId)) return;
         if (studentRepository.isStudentInCourse(studentId, courseId)) return;
+
         studentRepository.addStudentToClass(studentId, courseId);
-        int lectureId = getFreeLectureFromCourse(courseId);
+        CourseRepository.incrementCourseCapacity(courseId);
+
+        int lectureId = LectureRepository.getFreeLectureFromCourse(courseId);
         if (lectureId == -1) return;
         studentRepository.addStudentToLecture(studentId, lectureId);
+        LectureRepository.incrementLectureCapacity(lectureId);
     }
 
     public double getAverageGrade(int studentId) throws SQLException {
         ArrayList<Integer> grades = studentRepository.getAllGradesFromStudent(studentId);
-        int avg = 0;
-        for (Integer grade : grades) {
-            avg += grade;
-        }
-        return (double) avg / grades.size();
+        if(grades.size() == 0) return -1;
+        int average = grades.stream().mapToInt(x -> x).sum();
+        return (double) average / grades.size();
     }
 
     public void deleteStudent(int studentId) throws SQLException {
-        ArrayList<Course> courses = studentRepository.getAllCoursesFromStudent(studentId);
+        ArrayList<Course> courses = (ArrayList<Course>) this.getCoursesOfStudent(studentId);
         for (Course course : courses) {
-            decrementCourseCapacity(course.getID());
+            CourseRepository.decrementCourseCapacity(course.getID());
         }
         studentRepository.deleteStudentFromCourses(studentId);
 
-        ArrayList<Lecture> lectures = studentRepository.getLecturesOfStudent(studentId);
+        ArrayList<Lecture> lectures = (ArrayList<Lecture>) this.getLecturesOfStudent(studentId);
         for (Lecture lecture : lectures) {
-            decrementLectureCapacity(lecture.getId());
+            CourseRepository.decrementCourseCapacity(lecture.getId());
         }
         studentRepository.deleteStudentFromLecture(studentId);
 
         studentRepository.deleteStudent(studentId);
-
     }
 
 }

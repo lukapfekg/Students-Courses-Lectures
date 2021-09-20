@@ -7,21 +7,22 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
-import static com.example.StudentsCoursesLectures.Repository.CourseRepository.getCourse;
-import static com.example.StudentsCoursesLectures.Repository.StudentRepository.getStudent;
+import static com.example.StudentsCoursesLectures.Repository.CourseRepository.getCourseAtIndex;
+import static com.example.StudentsCoursesLectures.Repository.StudentRepository.getStudentAtIndex;
 
 @Repository
 public class LectureRepository {
 
     private static final String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
 
-    public ArrayList<Lecture> printAllLectures() throws SQLException {
+    public List<Lecture> printAllLectures() throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM students.lectures");
-            ArrayList<Lecture> lectureList = new ArrayList<>();
+            List<Lecture> lectureList = new ArrayList<>();
 
             while (resultSet.next()) {
                 int id = resultSet.getInt(1);
@@ -67,12 +68,12 @@ public class LectureRepository {
         }
     }
 
-    private ArrayList<Integer> getLecturesIDFromStudent(int studentId) throws SQLException {
+    public static List<Integer> getLecturesIdFromStudent(int studentId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
             ResultSet resultSet = statement.executeQuery("SELECT id_lectures FROM students.students_lectures WHERE id_students=" + studentId);
-            ArrayList<Integer> idList = new ArrayList<>();
+            List<Integer> idList = new ArrayList<>();
             while (resultSet.next()) {
                 int id = resultSet.getInt(1);
                 idList.add(id);
@@ -82,56 +83,28 @@ public class LectureRepository {
         }
     }
 
-    public ArrayList<Lecture> getLecturesFromStudent(int studentId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
-            ArrayList<Integer> lecturesID = getLecturesIDFromStudent(studentId);
-            ArrayList<Lecture> lectures = new ArrayList<>();
-            for (Integer integer : lecturesID) {
-                ResultSet resultSet = statement.executeQuery("SELECT id_lectures FROM students.students_lectures WHERE id_students=" + integer);
-                resultSet.next();
-                Lecture lecture = getLectureAtIndex(resultSet.getInt(1));
-                lectures.add(lecture);
-            }
-            return lectures;
-        }
-    }
-
-    private ArrayList<Integer> getLecturesFromCourse(Course course) throws SQLException {
+    public static List<Integer> getLecturesIdFromCourse(int courseId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
-            ResultSet resultSet = statement.executeQuery("SELECT id FROM students.lectures WHERE course_id=" + course.getID());
-            ArrayList<Integer> intList = new ArrayList<>();
+            ResultSet resultSet = statement.executeQuery("SELECT id FROM students.lectures WHERE course_id=" + courseId);
+            List<Integer> idList = new ArrayList<>();
             while (resultSet.next()) {
                 int id = resultSet.getInt(1);
-                intList.add(id);
+                idList.add(id);
             }
-            return intList;
+
+            return idList;
         }
     }
 
-    public ArrayList<Student> getStudentsFromLecture(int lectureId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
-             Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT id_students FROM students.students_lectures WHERE id_lectures=" + lectureId);
-            ArrayList<Student> lectureList = new ArrayList<>();
-            while (resultSet.next()) {
-                int studentID = resultSet.getInt(1);
-                lectureList.add(getStudent(studentID, connectionString));
-            }
-            return lectureList;
-        }
-    }
-
-
-    public Course getCourseFromLecture(int lectureId) throws SQLException {
+    public static int getCourseIdFromLecture(int lectureId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery("SELECT course_id FROM students.lectures WHERE id=" + lectureId);
             resultSet.next();
 
-            return getCourse(resultSet.getInt(1));
+            return resultSet.getInt(1);
         }
     }
 
