@@ -1,19 +1,15 @@
 package com.example.StudentsCoursesLectures.Repository;
 
 import com.example.StudentsCoursesLectures.Model.Course;
-import com.example.StudentsCoursesLectures.Model.Lecture;
-import com.example.StudentsCoursesLectures.Model.Student;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
 
-import static com.example.StudentsCoursesLectures.Repository.LectureRepository.getLecture;
-
 @Repository
 public class CourseRepository {
 
-    private static final String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
+    private final String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
 
     public ArrayList<Course> printAllCourses() throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
@@ -44,7 +40,7 @@ public class CourseRepository {
         }
     }
 
-    public static int getCourseId(String courseName) throws SQLException {
+    public int getCourseId(String courseName) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
@@ -54,7 +50,7 @@ public class CourseRepository {
         }
     }
 
-    public static void createLecturesForCourse(Course course) throws SQLException {
+    public void createLecturesForCourse(Course course) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
             int maxNumOfStudents = course.getMaxNumberOfStudents() / 3;
 
@@ -76,7 +72,7 @@ public class CourseRepository {
         }
     }
 
-    public static Course getCourseAtIndex(int courseID) throws SQLException {
+    public Course getCourseAtIndex(int courseID) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
@@ -92,7 +88,7 @@ public class CourseRepository {
     }
 
 
-    public static void incrementCourseCapacity(int courseId) throws SQLException {
+    public void incrementCourseCapacity(int courseId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
 
             String query = "UPDATE students.courses SET num_of_students=num_of_students+1 WHERE id=" + courseId;
@@ -101,7 +97,7 @@ public class CourseRepository {
         }
     }
 
-    public static void decrementCourseCapacity(int courseId) throws SQLException {
+    public void decrementCourseCapacity(int courseId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
 
             String query = "UPDATE students.courses SET num_of_students=num_of_students-1 WHERE id=" + courseId;
@@ -110,7 +106,7 @@ public class CourseRepository {
         }
     }
 
-    public static boolean isCourseFull(int courseID) throws SQLException {
+    public boolean isCourseFull(int courseID) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
@@ -132,7 +128,7 @@ public class CourseRepository {
         }
     }
 
-    public static void deleteStudentCourseConnection(int courseId) throws SQLException {
+    public void deleteStudentCourseConnection(int courseId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
 
             String query = "DELETE FROM students.students_courses WHERE id_courses=" + courseId;
@@ -141,7 +137,7 @@ public class CourseRepository {
         }
     }
 
-    public static ArrayList<Integer> getCourseIDFromStudent(int studentId) throws SQLException {
+    public ArrayList<Integer> getCourseIDFromStudent(int studentId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 

@@ -13,15 +13,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.StudentsCoursesLectures.Repository.LectureRepository.deleteLecture;
-
 @Service
 public class CourseService {
     private final CourseRepository courseRepository;
+    private final StudentRepository studentRepository;
+    private final LectureRepository lectureRepository;
+
 
     @Autowired
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, StudentRepository studentRepository, LectureRepository lectureRepository) {
         this.courseRepository = courseRepository;
+        this.studentRepository = studentRepository;
+        this.lectureRepository = lectureRepository;
     }
 
     public List<Course> getStudents() throws SQLException {
@@ -31,32 +34,32 @@ public class CourseService {
     public void addNewCourse(Course course) throws SQLException {
         if (courseRepository.doesCourseExist(course)) return;
         courseRepository.addNewCourse(course);
-        int id = CourseRepository.getCourseId(course.getCourseName());
+        int id = courseRepository.getCourseId(course.getCourseName());
         course.setId(id);
-        CourseRepository.createLecturesForCourse(course);
+        courseRepository.createLecturesForCourse(course);
     }
 
     public Course getCourseWithID(int courseID) throws SQLException {
-        return CourseRepository.getCourseAtIndex(courseID);
+        return courseRepository.getCourseAtIndex(courseID);
     }
 
     public List<Student> getStudentsFromCourse(int courseId) throws SQLException {
-        List<Integer> idList = StudentRepository.getStudentsIdFromCourse(courseId);
+        List<Integer> idList = studentRepository.getStudentsIdFromCourse(courseId);
         List<Student> students = new ArrayList<>();
 
-        for(Integer id : idList){
-            students.add(StudentRepository.getStudentAtIndex(id));
+        for (Integer id : idList) {
+            students.add(studentRepository.getStudentAtIndex(id));
         }
 
         return students;
     }
 
     public List<Lecture> getLecturesFromCourse(int courseId) throws SQLException {
-        List<Integer> idList = LectureRepository.getLecturesIdFromCourse(courseId);
+        List<Integer> idList = lectureRepository.getLecturesIdFromCourse(courseId);
         List<Lecture> lectures = new ArrayList<>();
 
-        for(Integer id : idList){
-            lectures.add(LectureRepository.getLecture(id));
+        for (Integer id : idList) {
+            lectures.add(lectureRepository.getLecture(id));
         }
 
         return lectures;
@@ -66,9 +69,10 @@ public class CourseService {
     public void deleteCourse(int courseId) throws SQLException {
         List<Lecture> lectures = this.getLecturesFromCourse(courseId);
         for (Lecture lecture : lectures) {
-            deleteLecture(lecture.getId());
+            lectureRepository.deleteLecture(lecture.getId());
+            lectureRepository.deleteStudentLectureConnection(lecture.getId());
         }
         courseRepository.deleteCourse(courseId);
-        CourseRepository.deleteStudentCourseConnection(courseId);
+        courseRepository.deleteStudentCourseConnection(courseId);
     }
 }

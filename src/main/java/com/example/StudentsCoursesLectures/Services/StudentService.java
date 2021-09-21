@@ -15,11 +15,15 @@ import java.util.List;
 
 @Service
 public class StudentService {
+    private final CourseRepository courseRepository;
     private final StudentRepository studentRepository;
+    private final LectureRepository lectureRepository;
 
     @Autowired
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(CourseRepository courseRepository, StudentRepository studentRepository, LectureRepository lectureRepository) {
+        this.courseRepository = courseRepository;
         this.studentRepository = studentRepository;
+        this.lectureRepository = lectureRepository;
     }
 
     public List<Student> getStudents() throws SQLException {
@@ -27,7 +31,7 @@ public class StudentService {
     }
 
     public Student getStudent(int studentId) throws SQLException {
-        return StudentRepository.getStudentAtIndex(studentId);
+        return studentRepository.getStudentAtIndex(studentId);
     }
 
     public void addStudent(Student student) throws SQLException {
@@ -36,23 +40,23 @@ public class StudentService {
     }
 
     public List<Course> getCoursesOfStudent(int studentId) throws SQLException {
-        ArrayList<Integer> idList = CourseRepository.getCourseIDFromStudent(studentId);
+        ArrayList<Integer> idList = courseRepository.getCourseIDFromStudent(studentId);
         ArrayList<Course> courses = new ArrayList<>();
 
         for (Integer id : idList) {
-            courses.add(CourseRepository.getCourseAtIndex(id));
+            courses.add(courseRepository.getCourseAtIndex(id));
         }
 
         return courses;
     }
 
     public List<Lecture> getLecturesOfStudent(int studentId) throws SQLException {
-        List<Integer> lectureIds = LectureRepository.getLecturesIdFromStudent(studentId);
+        List<Integer> lectureIds = lectureRepository.getLecturesIdFromStudent(studentId);
         List<Lecture> lectures = new ArrayList<>();
         // ArrayList<Lecture> lectures = lectureIds.stream().forEach(id -> LectureRepository.getLecture(id));
 
         for (Integer lectureId : lectureIds) {
-            lectures.add(LectureRepository.getLecture(lectureId));
+            lectures.add(lectureRepository.getLecture(lectureId));
         }
 
         return lectures;
@@ -64,16 +68,16 @@ public class StudentService {
     }
 
     public void addStudentToClass(int studentId, int courseId) throws SQLException {
-        if (CourseRepository.isCourseFull(courseId)) return;
+        if (courseRepository.isCourseFull(courseId)) return;
         if (studentRepository.isStudentInCourse(studentId, courseId)) return;
 
         studentRepository.addStudentToClass(studentId, courseId);
-        CourseRepository.incrementCourseCapacity(courseId);
+        courseRepository.incrementCourseCapacity(courseId);
 
-        int lectureId = LectureRepository.getFreeLectureFromCourse(courseId);
+        int lectureId = lectureRepository.getFreeLectureFromCourse(courseId);
         if (lectureId == -1) return;
         studentRepository.addStudentToLecture(studentId, lectureId);
-        LectureRepository.incrementLectureCapacity(lectureId);
+        lectureRepository.incrementLectureCapacity(lectureId);
     }
 
     public double getAverageGrade(int studentId) throws SQLException {
@@ -86,13 +90,13 @@ public class StudentService {
     public void deleteStudent(int studentId) throws SQLException {
         ArrayList<Course> courses = (ArrayList<Course>) this.getCoursesOfStudent(studentId);
         for (Course course : courses) {
-            CourseRepository.decrementCourseCapacity(course.getID());
+            courseRepository.decrementCourseCapacity(course.getID());
         }
         studentRepository.deleteStudentFromCourses(studentId);
 
         ArrayList<Lecture> lectures = (ArrayList<Lecture>) this.getLecturesOfStudent(studentId);
         for (Lecture lecture : lectures) {
-            CourseRepository.decrementCourseCapacity(lecture.getId());
+           lectureRepository.decrementLectureCapacity(lecture.getId());
         }
         studentRepository.deleteStudentFromLecture(studentId);
 

@@ -1,6 +1,5 @@
 package com.example.StudentsCoursesLectures.Repository;
 
-import com.example.StudentsCoursesLectures.Model.Course;
 import com.example.StudentsCoursesLectures.Model.Student;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +9,7 @@ import java.util.List;
 
 @Repository
 public class StudentRepository {
-    static final String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
+    private final String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
 
 
     public List<Student> getAllStudents() throws SQLException {
@@ -77,7 +76,7 @@ public class StudentRepository {
         }
     }
 
-    public static Student getStudentAtIndex(int studentID) throws SQLException {
+    public Student getStudentAtIndex(int studentID) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
@@ -110,7 +109,7 @@ public class StudentRepository {
             String query = "INSERT INTO students.students_lectures VALUES (" + studentId + ", " + lectureId + ")";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.execute();
-           // incrementLectureCapacity(lectureId);
+            // incrementLectureCapacity(lectureId);
         }
     }
 
@@ -152,7 +151,7 @@ public class StudentRepository {
         }
     }
 
-    public static List<Integer> getStudentsIdFromCourse(int courseId) throws SQLException {
+    public List<Integer> getStudentsIdFromCourse(int courseId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
@@ -167,7 +166,7 @@ public class StudentRepository {
         }
     }
 
-    public static List<Integer> getStudentsIdFromLecture(int lectureId) throws SQLException {
+    public List<Integer> getStudentsIdFromLecture(int lectureId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
