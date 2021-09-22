@@ -9,8 +9,8 @@ import java.util.List;
 
 @Repository
 public class StudentRepository {
-    private final String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
 
+    private final String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
 
     public List<Student> getAllStudents() throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
@@ -42,12 +42,31 @@ public class StudentRepository {
         }
     }
 
+    public void addNewStudent(String firstName, String lastName, String yearEntered) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+
+            String query = "INSERT INTO students.students VALUES (DEFAULT, '" + firstName + "', '" + lastName + "', '" + yearEntered + "')";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+        }
+    }
+
     public boolean doesStudentExist(Student student) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM students.students WHERE first_name='"
                     + student.getFirstName() + "' AND last_name='" + student.getLastName() + "' AND year_entered='" + student.getYearEntered() + "'");
+
+            return resultSet.next();
+        }
+    }
+
+    public boolean doesStudentExist(int studentId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+
+            final ResultSet resultSet = statement.executeQuery("SELECT * FROM students.students WHERE id=" + studentId);
 
             return resultSet.next();
         }
@@ -76,7 +95,7 @@ public class StudentRepository {
         }
     }
 
-    public Student getStudentAtIndex(int studentID) throws SQLException {
+    public Student getStudent(int studentID) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
@@ -141,7 +160,6 @@ public class StudentRepository {
         }
     }
 
-
     public void deleteStudent(int studentId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
 
@@ -180,7 +198,6 @@ public class StudentRepository {
             return idList;
         }
     }
-
 
 }
 

@@ -16,10 +16,11 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/lecture")
 public class LectureController {
+
     private final LectureService lectureService;
 
     @Autowired
-    public LectureController(LectureService lectureService){
+    public LectureController(LectureService lectureService) {
         this.lectureService = lectureService;
     }
 

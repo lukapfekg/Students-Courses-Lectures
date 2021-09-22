@@ -27,26 +27,33 @@ public class LectureService {
     }
 
     public List<Lecture> getLectures() throws SQLException {
-        return lectureRepository.printAllLectures();
+        List<Lecture> lectures = lectureRepository.getAllLectures();
+        if (lectures.size() == 0) throw new IllegalArgumentException("No lectures in the system!");
+
+        return lectures;
     }
 
     public Lecture getLectureWithId(int lectureId) throws SQLException {
+        if (!lectureRepository.doesLectureExist(lectureId)) throw new IllegalArgumentException("Lecture doesnt exits!");
         return lectureRepository.getLecture(lectureId);
     }
 
     public List<Student> getStudentsFromLecture(int lectureId) throws SQLException {
+        if (!lectureRepository.doesLectureExist(lectureId)) throw new IllegalArgumentException("Lecture doesnt exits!");
+
         List<Integer> idList = studentRepository.getStudentsIdFromLecture(lectureId);
+        if (idList.size() == 0) throw new IllegalArgumentException("Lecture has no students!");
+
         List<Student> students = new ArrayList<>();
-
-        for(Integer id : idList){
-            students.add(studentRepository.getStudentAtIndex(id));
+        for (Integer id : idList) {
+            students.add(studentRepository.getStudent(id));
         }
-
         return students;
     }
 
     public Course getCourseFromLecture(int lectureId) throws SQLException {
-        return courseRepository.getCourseAtIndex(lectureRepository.getCourseIdFromLecture(lectureId));
+        if (!lectureRepository.doesLectureExist(lectureId)) throw new IllegalArgumentException("Lecture doesnt exits!");
+        return courseRepository.getCourse(lectureRepository.getCourseIdFromLecture(lectureId));
     }
 
 

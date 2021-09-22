@@ -31,27 +31,34 @@ public class StudentService {
     }
 
     public Student getStudent(int studentId) throws SQLException {
-        return studentRepository.getStudentAtIndex(studentId);
+        if (!studentRepository.doesStudentExist(studentId)) throw new IllegalArgumentException("Student doesnt exits!");
+        return studentRepository.getStudent(studentId);
     }
 
     public void addStudent(Student student) throws SQLException {
-        if (studentRepository.doesStudentExist(student)) return;
+        if (!studentRepository.doesStudentExist(student)) throw new IllegalArgumentException("Student already exists!");
         studentRepository.addNewStudent(student);
     }
 
     public List<Course> getCoursesOfStudent(int studentId) throws SQLException {
-        ArrayList<Integer> idList = courseRepository.getCourseIDFromStudent(studentId);
+        if (!studentRepository.doesStudentExist(studentId)) throw new IllegalArgumentException("Student doesnt exits!");
+
+        ArrayList<Integer> idList = courseRepository.getCourseIdFromStudent(studentId);
+        if (idList.size() == 0) throw new IllegalArgumentException("Student hasn't been added to any courses!");
+
         ArrayList<Course> courses = new ArrayList<>();
-
         for (Integer id : idList) {
-            courses.add(courseRepository.getCourseAtIndex(id));
+            courses.add(courseRepository.getCourse(id));
         }
-
         return courses;
     }
 
     public List<Lecture> getLecturesOfStudent(int studentId) throws SQLException {
+        if (!studentRepository.doesStudentExist(studentId)) throw new IllegalArgumentException("Student doesnt exits!");
+
         List<Integer> lectureIds = lectureRepository.getLecturesIdFromStudent(studentId);
+        if (lectureIds.size() == 0) throw new IllegalArgumentException("Student hasn't been added to any courses!");
+
         List<Lecture> lectures = new ArrayList<>();
         // ArrayList<Lecture> lectures = lectureIds.stream().forEach(id -> LectureRepository.getLecture(id));
 
@@ -64,39 +71,50 @@ public class StudentService {
 
 
     public void gradeStudent(int studentId, int courseId, int grade) throws SQLException {
+        if (!studentRepository.doesStudentExist(studentId)) throw new IllegalArgumentException("Student doesnt exits!");
+        if (!courseRepository.doesCourseExist(courseId)) throw new IllegalArgumentException("Course doesnt exits!");
+        if (!studentRepository.isStudentInCourse(studentId, courseId))
+            throw new IllegalArgumentException("Student is not in that course!");
+
         studentRepository.gradeStudentAtCourse(studentId, courseId, grade);
     }
 
     public void addStudentToClass(int studentId, int courseId) throws SQLException {
-        if (courseRepository.isCourseFull(courseId)) return;
-        if (studentRepository.isStudentInCourse(studentId, courseId)) return;
+        if (!studentRepository.doesStudentExist(studentId)) throw new IllegalArgumentException("Student doesnt exits!");
+        if (!courseRepository.doesCourseExist(courseId)) throw new IllegalArgumentException("Course doesnt exits!");
+        if (studentRepository.isStudentInCourse(studentId, courseId))
+            throw new IllegalArgumentException("Student is already in course!");
+        if (courseRepository.isCourseFull(courseId)) throw new IllegalArgumentException("Course is full!");
 
         studentRepository.addStudentToClass(studentId, courseId);
-        courseRepository.incrementCourseCapacity(courseId);
+        courseRepository.incrementCourseStudentNumber(courseId);
 
         int lectureId = lectureRepository.getFreeLectureFromCourse(courseId);
         if (lectureId == -1) return;
         studentRepository.addStudentToLecture(studentId, lectureId);
-        lectureRepository.incrementLectureCapacity(lectureId);
+        lectureRepository.incrementLectureStudentNumber(lectureId);
     }
 
     public double getAverageGrade(int studentId) throws SQLException {
         ArrayList<Integer> grades = studentRepository.getAllGradesFromStudent(studentId);
-        if(grades.size() == 0) return -1;
+        if (grades.size() == 0) throw new IllegalArgumentException("Student doesn't have any grades!");
+
         int average = grades.stream().mapToInt(x -> x).sum();
         return (double) average / grades.size();
     }
 
     public void deleteStudent(int studentId) throws SQLException {
+        if (!studentRepository.doesStudentExist(studentId)) throw new IllegalArgumentException("Student doesnt exist!");
+
         ArrayList<Course> courses = (ArrayList<Course>) this.getCoursesOfStudent(studentId);
         for (Course course : courses) {
-            courseRepository.decrementCourseCapacity(course.getID());
+            courseRepository.decrementCourseStudentNumber(course.getID());
         }
         studentRepository.deleteStudentFromCourses(studentId);
 
         ArrayList<Lecture> lectures = (ArrayList<Lecture>) this.getLecturesOfStudent(studentId);
         for (Lecture lecture : lectures) {
-           lectureRepository.decrementLectureCapacity(lecture.getId());
+            lectureRepository.decrementLectureStudentNumber(lecture.getId());
         }
         studentRepository.deleteStudentFromLecture(studentId);
 

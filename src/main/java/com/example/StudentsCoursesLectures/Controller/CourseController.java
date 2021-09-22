@@ -14,6 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(path = "/course")
 public class CourseController {
+
     private final CourseService courseService;
 
     @Autowired
@@ -21,10 +22,9 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-
     @GetMapping
     public List<Course> getCourses() throws SQLException {
-        return courseService.getStudents();
+        return courseService.getCourses();
     }
 
     @GetMapping(path = "/{courseId}/attending-students")
@@ -34,7 +34,7 @@ public class CourseController {
 
     @GetMapping(path = "/{courseId}")
     public Course getCourse(@PathVariable int courseId) throws SQLException {
-        return courseService.getCourseWithID(courseId);
+        return courseService.getCourse(courseId);
     }
 
     @GetMapping(path = "/{courseId}/lectures-of-course")

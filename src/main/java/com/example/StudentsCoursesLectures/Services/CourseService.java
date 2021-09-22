@@ -27,46 +27,56 @@ public class CourseService {
         this.lectureRepository = lectureRepository;
     }
 
-    public List<Course> getStudents() throws SQLException {
-        return courseRepository.printAllCourses();
+    public List<Course> getCourses() throws SQLException {
+        List<Course> courses = courseRepository.getAllCourses();
+        if (courses.size() == 0) throw new IllegalArgumentException("No courses in the system!");
+
+        return courses;
     }
 
     public void addNewCourse(Course course) throws SQLException {
-        if (courseRepository.doesCourseExist(course)) return;
+        if (courseRepository.doesCourseExist(course)) throw new IllegalArgumentException("Course already exists!");
+
         courseRepository.addNewCourse(course);
-        int id = courseRepository.getCourseId(course.getCourseName());
-        course.setId(id);
+        courseRepository.getCourseId(course.getCourseName());
+        course.setId(courseRepository.getCourseId(course.getCourseName()));
         courseRepository.createLecturesForCourse(course);
     }
 
-    public Course getCourseWithID(int courseID) throws SQLException {
-        return courseRepository.getCourseAtIndex(courseID);
+    public Course getCourse(int courseId) throws SQLException {
+        if (!courseRepository.doesCourseExist(courseId)) throw new IllegalArgumentException("Course doesnt exist!");
+
+        return courseRepository.getCourse(courseId);
     }
 
     public List<Student> getStudentsFromCourse(int courseId) throws SQLException {
+        if (!courseRepository.doesCourseExist(courseId)) throw new IllegalArgumentException("Course doesnt exist!");
+
         List<Integer> idList = studentRepository.getStudentsIdFromCourse(courseId);
+        if (idList.size() == 0) throw new IllegalArgumentException("Course has no students!");
+
         List<Student> students = new ArrayList<>();
-
         for (Integer id : idList) {
-            students.add(studentRepository.getStudentAtIndex(id));
+            students.add(studentRepository.getStudent(id));
         }
-
         return students;
     }
 
     public List<Lecture> getLecturesFromCourse(int courseId) throws SQLException {
+        if (!courseRepository.doesCourseExist(courseId)) throw new IllegalArgumentException("Course doesnt exist!");
+
         List<Integer> idList = lectureRepository.getLecturesIdFromCourse(courseId);
         List<Lecture> lectures = new ArrayList<>();
-
         for (Integer id : idList) {
             lectures.add(lectureRepository.getLecture(id));
         }
-
         return lectures;
     }
 
 
     public void deleteCourse(int courseId) throws SQLException {
+        if (!courseRepository.doesCourseExist(courseId)) throw new IllegalArgumentException("Course doesnt exist!");
+
         List<Lecture> lectures = this.getLecturesFromCourse(courseId);
         for (Lecture lecture : lectures) {
             lectureRepository.deleteLecture(lecture.getId());

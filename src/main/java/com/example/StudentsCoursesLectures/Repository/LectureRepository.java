@@ -12,7 +12,7 @@ public class LectureRepository {
 
     private final String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
 
-    public List<Lecture> printAllLectures() throws SQLException {
+    public List<Lecture> getAllLectures() throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
              Statement statement = connection.createStatement()) {
 
@@ -34,7 +34,7 @@ public class LectureRepository {
         }
     }
 
-    public void decrementLectureCapacity(int lectureID) throws SQLException {
+    public void decrementLectureStudentNumber(int lectureID) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
 
             String query = "UPDATE students.lectures SET num_of_students=num_of_students-1 WHERE id=" + lectureID;
@@ -115,7 +115,7 @@ public class LectureRepository {
         }
     }
 
-    public void incrementLectureCapacity(int lectureId) throws SQLException {
+    public void incrementLectureStudentNumber(int lectureId) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
             String query = "UPDATE students.lectures SET num_of_students=num_of_students+1 WHERE id=" + lectureId;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -141,5 +141,13 @@ public class LectureRepository {
         }
     }
 
+    public boolean doesLectureExist(int lectureId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+             Statement statement = connection.createStatement()) {
+
+            final ResultSet resultSet = statement.executeQuery("SELECT * FROM students.lectures WHERE id=" + lectureId);
+            return resultSet.next();
+        }
+    }
 
 }
