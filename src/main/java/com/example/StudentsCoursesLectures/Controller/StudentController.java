@@ -54,8 +54,7 @@ public class StudentController {
 
     @PostMapping
     public void addStudent(@RequestBody Map<String, String> body) throws SQLException {
-        Student student = new Student(body.get("firstName"), body.get("lastName"), body.get("yearEntered"));
-        studentService.addStudent(student);
+        studentService.addStudent(body.get("firstName"), body.get("lastName"), body.get("yearEntered"));
     }
 
     @PostMapping(path = "/add-to-course")

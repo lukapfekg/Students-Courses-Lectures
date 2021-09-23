@@ -34,11 +34,11 @@ public class CourseService {
         return courses;
     }
 
-    public void addNewCourse(Course course) throws SQLException {
+    public void addNewCourse(String courseName, int maxNumOfStudents) throws SQLException {
+        Course course = new Course(courseName, maxNumOfStudents);
         if (courseRepository.doesCourseExist(course)) throw new IllegalArgumentException("Course already exists!");
 
         courseRepository.addNewCourse(course);
-        courseRepository.getCourseId(course.getCourseName());
         course.setId(courseRepository.getCourseId(course.getCourseName()));
         courseRepository.createLecturesForCourse(course);
     }

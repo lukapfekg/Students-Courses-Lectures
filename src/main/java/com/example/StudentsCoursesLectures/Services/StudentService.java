@@ -35,7 +35,8 @@ public class StudentService {
         return studentRepository.getStudent(studentId);
     }
 
-    public void addStudent(Student student) throws SQLException {
+    public void addStudent(String firstName, String lastName, String yearEntered) throws SQLException {
+        Student student = new Student(firstName, lastName, yearEntered);
         if (!studentRepository.doesStudentExist(student)) throw new IllegalArgumentException("Student already exists!");
         studentRepository.addNewStudent(student);
     }

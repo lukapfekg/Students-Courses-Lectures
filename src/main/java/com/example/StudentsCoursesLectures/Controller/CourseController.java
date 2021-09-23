@@ -44,8 +44,7 @@ public class CourseController {
 
     @PostMapping
     public void createCourse(@RequestBody Map<String, String> body) throws SQLException {
-        Course course = new Course(body.get("courseName"), Integer.parseInt(body.get("maxNumOfStudents")));
-        courseService.addNewCourse(course);
+        courseService.addNewCourse(body.get("courseName"), Integer.parseInt(body.get("maxNumOfStudents")));
     }
 
     @DeleteMapping(path = "/{courseId}")
