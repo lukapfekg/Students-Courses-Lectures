@@ -69,7 +69,6 @@ public class StudentService {
         return lectures;
     }
 
-
     public void gradeStudent(int studentId, int courseId, int grade) throws SQLException {
         if (!studentRepository.doesStudentExist(studentId)) throw new IllegalArgumentException("Student doesnt exits!");
         if (!courseRepository.doesCourseExist(courseId)) throw new IllegalArgumentException("Course doesnt exits!");
@@ -79,7 +78,7 @@ public class StudentService {
         studentRepository.gradeStudentAtCourse(studentId, courseId, grade);
     }
 
-    public void addStudentToClass(int studentId, int courseId) throws SQLException {
+    public void addStudentToCourse(int studentId, int courseId) throws SQLException {
         if (!studentRepository.doesStudentExist(studentId)) throw new IllegalArgumentException("Student doesnt exits!");
         if (!courseRepository.doesCourseExist(courseId)) throw new IllegalArgumentException("Course doesnt exits!");
         if (studentRepository.isStudentInCourse(studentId, courseId))

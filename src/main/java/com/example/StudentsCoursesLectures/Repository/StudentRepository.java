@@ -118,7 +118,6 @@ public class StudentRepository {
             String query = "INSERT INTO students.students_courses VALUES (" + studentId + ", " + courseId + ", " + "3)";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.execute();
-            //incrementCourseCapacity(courseId);
         }
     }
 
@@ -128,7 +127,6 @@ public class StudentRepository {
             String query = "INSERT INTO students.students_lectures VALUES (" + studentId + ", " + lectureId + ")";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.execute();
-            // incrementLectureCapacity(lectureId);
         }
     }
 

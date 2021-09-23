@@ -59,8 +59,8 @@ public class StudentController {
     }
 
     @PostMapping(path = "/add-to-course")
-    public void addStudentToClass(@RequestBody Map<String, String> body) throws SQLException {
-        studentService.addStudentToClass(Integer.parseInt(body.get("studentId")), Integer.parseInt(body.get("courseId")));
+    public void addStudentToCourse(@RequestBody Map<String, String> body) throws SQLException {
+        studentService.addStudentToCourse(Integer.parseInt(body.get("studentId")), Integer.parseInt(body.get("courseId")));
     }
 
     @DeleteMapping(path = "/{studentId}")
