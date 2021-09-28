@@ -1,6 +1,7 @@
 package com.example.StudentsCoursesLectures.Repository;
 
 import com.example.StudentsCoursesLectures.Model.Course;
+import com.example.StudentsCoursesLectures.Model.DBParameters;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -9,10 +10,12 @@ import java.util.ArrayList;
 @Repository
 public class CourseRepository {
 
-    private final String connectionString = "jdbc:postgresql://localhost:5432/studentSystem";
+    private final String connectionString = DBParameters.getInstance().getConnectionString();
+    private final String username = DBParameters.getInstance().getUsername();
+    private final String password = DBParameters.getInstance().getPassword();
 
     public ArrayList<Course> getAllCourses() throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+        try (Connection connection = DriverManager.getConnection(connectionString, username, password);
              Statement statement = connection.createStatement()) {
 
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM students.courses");
@@ -32,7 +35,7 @@ public class CourseRepository {
     }
 
     public void addNewCourse(Course course) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+        try (Connection connection = DriverManager.getConnection(connectionString, username, password)) {
 
             String query = "INSERT INTO students.courses VALUES (DEFAULT, '" + course.getCourseName() + "', " + course.getMaxNumberOfStudents() + ", " + course.getNumberOfStudents() + ")";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -41,7 +44,7 @@ public class CourseRepository {
     }
 
     public void addNewCourse(String courseName, int maxNumOfStudents) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+        try (Connection connection = DriverManager.getConnection(connectionString, username, password)) {
 
             String query = "INSERT INTO students.courses VALUES (DEFAULT, '" + courseName + "', " + maxNumOfStudents + ", " + 0 + ")";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -50,7 +53,7 @@ public class CourseRepository {
     }
 
     public int getCourseId(String courseName) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+        try (Connection connection = DriverManager.getConnection(connectionString, username, password);
              Statement statement = connection.createStatement()) {
 
             ResultSet resultSet = statement.executeQuery("SELECT id FROM students.courses WHERE course_name='" + courseName + "'");
@@ -60,7 +63,7 @@ public class CourseRepository {
     }
 
     public void createLecturesForCourse(Course course) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+        try (Connection connection = DriverManager.getConnection(connectionString, username, password)) {
             int maxNumOfStudents = course.getMaxNumberOfStudents() / 3;
 
             for (int i = 1; i < 4; i++) {
@@ -72,7 +75,7 @@ public class CourseRepository {
     }
 
     public boolean doesCourseExist(Course course) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+        try (Connection connection = DriverManager.getConnection(connectionString, username, password);
              Statement statement = connection.createStatement()) {
 
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM students.courses WHERE course_name='"
@@ -82,7 +85,7 @@ public class CourseRepository {
     }
 
     public boolean doesCourseExist(int courseId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+        try (Connection connection = DriverManager.getConnection(connectionString, username, password);
              Statement statement = connection.createStatement()) {
 
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM students.courses WHERE id=" + courseId);
@@ -91,7 +94,7 @@ public class CourseRepository {
     }
 
     public Course getCourse(int courseID) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+        try (Connection connection = DriverManager.getConnection(connectionString, username, password);
              Statement statement = connection.createStatement()) {
 
             ResultSet resultSet = statement.executeQuery("SELECT * FROM students.courses WHERE id=" + courseID);
@@ -106,7 +109,7 @@ public class CourseRepository {
     }
 
     public void incrementCourseStudentNumber(int courseId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+        try (Connection connection = DriverManager.getConnection(connectionString, username, password)) {
 
             String query = "UPDATE students.courses SET num_of_students=num_of_students+1 WHERE id=" + courseId;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -115,7 +118,7 @@ public class CourseRepository {
     }
 
     public void decrementCourseStudentNumber(int courseId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+        try (Connection connection = DriverManager.getConnection(connectionString, username, password)) {
 
             String query = "UPDATE students.courses SET num_of_students=num_of_students-1 WHERE id=" + courseId;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -124,7 +127,7 @@ public class CourseRepository {
     }
 
     public boolean isCourseFull(int courseID) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+        try (Connection connection = DriverManager.getConnection(connectionString, username, password);
              Statement statement = connection.createStatement()) {
 
             ResultSet resultSet = statement.executeQuery("SELECT max_num_of_students, num_of_students FROM students.courses WHERE id=" + courseID);
@@ -137,7 +140,7 @@ public class CourseRepository {
     }
 
     public void deleteCourse(int courseId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+        try (Connection connection = DriverManager.getConnection(connectionString, username, password)) {
 
             String query = "DELETE FROM students.courses WHERE id=" + courseId;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -146,7 +149,7 @@ public class CourseRepository {
     }
 
     public void deleteStudentCourseConnection(int courseId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root")) {
+        try (Connection connection = DriverManager.getConnection(connectionString, username, password)) {
 
             String query = "DELETE FROM students.students_courses WHERE id_courses=" + courseId;
             PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -155,7 +158,7 @@ public class CourseRepository {
     }
 
     public ArrayList<Integer> getCourseIdFromStudent(int studentId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, "postgres", "root");
+        try (Connection connection = DriverManager.getConnection(connectionString, username, password);
              Statement statement = connection.createStatement()) {
 
             ResultSet resultSet = statement.executeQuery("SELECT id_courses FROM students.students_courses WHERE id_students=" + studentId);
