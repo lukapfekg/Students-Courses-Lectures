@@ -26,8 +26,8 @@ public class StudentService {
         this.lectureRepository = lectureRepository;
     }
 
-    public List<Student> getStudents() throws SQLException {
-        return studentRepository.getAllStudents();
+    public static List<Student> getStudents() throws SQLException {
+        return StudentRepository.getAllStudents();
     }
 
     public Student getStudent(int studentId) throws SQLException {
@@ -95,8 +95,8 @@ public class StudentService {
         lectureRepository.incrementLectureStudentNumber(lectureId);
     }
 
-    public double getAverageGrade(int studentId) throws SQLException {
-        ArrayList<Integer> grades = studentRepository.getAllGradesFromStudent(studentId);
+    public static double getAverageGrade(int studentId) throws SQLException {
+        ArrayList<Integer> grades = StudentRepository.getAllGradesFromStudent(studentId);
         if (grades.size() == 0) throw new IllegalArgumentException("Student doesn't have any grades!");
 
         int average = grades.stream().mapToInt(x -> x).sum();

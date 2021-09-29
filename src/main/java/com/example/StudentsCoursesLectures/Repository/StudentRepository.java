@@ -15,8 +15,8 @@ public class StudentRepository {
     private final String username = DBParameters.getInstance().getUsername();
     private final String password = DBParameters.getInstance().getPassword();
 
-    public List<Student> getAllStudents() throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, username, password);
+    public static List<Student> getAllStudents() throws SQLException {
+        try (Connection connection = DriverManager.getConnection(DBParameters.getInstance().getConnectionString(), DBParameters.getInstance().getUsername(), DBParameters.getInstance().getPassword());
              Statement statement = connection.createStatement()) {
 
             final ResultSet resultSet = statement.executeQuery("SELECT * FROM students.students");
@@ -84,8 +84,8 @@ public class StudentRepository {
         }
     }
 
-    public ArrayList<Integer> getAllGradesFromStudent(int studentId) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(connectionString, username, password);
+    public static ArrayList<Integer> getAllGradesFromStudent(int studentId) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(DBParameters.getInstance().getConnectionString(), DBParameters.getInstance().getUsername(), DBParameters.getInstance().getPassword());
              Statement statement = connection.createStatement()) {
 
             ResultSet resultSet = statement.executeQuery("SELECT grade FROM students.students_courses WHERE id_students=" + studentId);
