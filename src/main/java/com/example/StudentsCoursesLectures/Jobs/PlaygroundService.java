@@ -15,10 +15,10 @@ public class PlaygroundService {
         this.scheduler = scheduler;
     }
 
-    public void runAverageGradeJob() throws SQLException {
+    public void runAverageGradeJob() {
         final TimerInfo info = new TimerInfo();
-        info.setTotalFireCount(5);
-        info.setRepeatIntervalMs(2000);
+        info.setRunForever(true);
+        info.setRepeatIntervalMs(300000);
         info.setInitialOffsetMs(1000);
         info.setCallbackData("My callback data");
         scheduler.schedule(CalculateAverageGrade.class, info);
