@@ -18,7 +18,7 @@ public class PlaygroundService {
     public void runAverageGradeJob() {
         final TimerInfo info = new TimerInfo();
         info.setRunForever(true);
-        info.setRepeatIntervalMs(300000);
+        info.setRepeatIntervalMs(10000);
         info.setInitialOffsetMs(1000);
         info.setCallbackData("My callback data");
         scheduler.schedule(CalculateAverageGrade.class, info);
