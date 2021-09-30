@@ -5,7 +5,6 @@ import com.example.StudentsCoursesLectures.Repository.AverageGradesRepository;
 import com.example.StudentsCoursesLectures.Services.StudentService;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
