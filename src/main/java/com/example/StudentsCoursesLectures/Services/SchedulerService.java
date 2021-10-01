@@ -1,5 +1,7 @@
-package com.example.StudentsCoursesLectures.Jobs;
+package com.example.StudentsCoursesLectures.Services;
 
+import com.example.Job.Util.TimerInfo;
+import com.example.Job.Util.TimerUtils;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -21,7 +23,7 @@ public class SchedulerService {
         this.scheduler = scheduler;
     }
 
-    public void schedule(final Class jobClass, final TimerInfo info){
+    public void schedule(final Class jobClass, final TimerInfo info) {
         final JobDetail jobDetail = TimerUtils.buildJobDetail(jobClass, info);
         final Trigger trigger = TimerUtils.buildTrigger(jobClass, info);
 

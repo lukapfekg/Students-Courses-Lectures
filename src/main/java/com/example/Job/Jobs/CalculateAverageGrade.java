@@ -1,4 +1,4 @@
-package com.example.StudentsCoursesLectures.Jobs;
+package com.example.Job.Jobs;
 
 import com.example.StudentsCoursesLectures.Model.Student;
 import com.example.StudentsCoursesLectures.Repository.AverageGradesRepository;

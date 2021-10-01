@@ -1,4 +1,4 @@
-package com.example.StudentsCoursesLectures.Jobs;
+package com.example.Job.Util;
 
 public class TimerInfo {
     private int totalFireCount;

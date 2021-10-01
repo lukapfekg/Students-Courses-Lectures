@@ -1,7 +1,10 @@
-package com.example.Crypto.Implementation;
+package com.example.Job.Jobs;
 
 import com.example.Crypto.Api.CoinGeckoApiClient;
 import com.example.Crypto.Constants.Currency;
+import com.example.Crypto.Implementation.CoinGeckoApiClientImpl;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
 
 import java.text.DecimalFormat;
 import java.time.Instant;
@@ -9,9 +12,11 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
-public class SimpleJob {
-    public static void main(String[] args) {
+public class GetCryptoValue implements Job {
 
+
+    @Override
+    public void execute(JobExecutionContext jobExecutionContext) {
         CoinGeckoApiClient client = new CoinGeckoApiClientImpl();
 
         String ids = "bitcoin";
@@ -35,4 +40,7 @@ public class SimpleJob {
 
         client.shutdown();
     }
+
+
+
 }
