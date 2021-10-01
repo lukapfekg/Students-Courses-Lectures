@@ -1,13 +1,11 @@
-package com.example.StudentsCoursesLectures.Controller;
+package com.example.Job.Controller;
 
-import com.example.StudentsCoursesLectures.Services.PlaygroundService;
+import com.example.Job.Service.PlaygroundService;
 import com.example.StudentsCoursesLectures.Services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.sql.SQLException;
 
 @RestController
 @RequestMapping(path = "/job")

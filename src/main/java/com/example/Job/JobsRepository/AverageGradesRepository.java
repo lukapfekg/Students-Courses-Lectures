@@ -1,4 +1,4 @@
-package com.example.StudentsCoursesLectures.Repository;
+package com.example.Job.JobsRepository;
 
 import com.example.StudentsCoursesLectures.Model.DBParameters;
 import org.springframework.stereotype.Repository;

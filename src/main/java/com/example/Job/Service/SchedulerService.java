@@ -1,4 +1,4 @@
-package com.example.StudentsCoursesLectures.Services;
+package com.example.Job.Service;
 
 import com.example.Job.Util.TimerInfo;
 import com.example.Job.Util.TimerUtils;

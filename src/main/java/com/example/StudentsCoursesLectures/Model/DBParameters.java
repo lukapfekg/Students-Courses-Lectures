@@ -8,6 +8,7 @@ public class DBParameters {
         return "jdbc:postgresql://localhost:5432/studentSystem";
     }
 
+
     public String getUsername() {
         return "postgres";
     }

@@ -1,4 +1,4 @@
-package com.example.StudentsCoursesLectures;
+package com.example.Job.Util;
 
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
