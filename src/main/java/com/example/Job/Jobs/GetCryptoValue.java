@@ -29,43 +29,38 @@ public class GetCryptoValue implements Job {
             for (Coin coin : coins) {
                 Map<String, Map<String, Double>> newCoin = client.getPrice(coin.getCoinId(), Currency.USD, true, true, true, true);
                 double coinPrice = newCoin.get(coin.getCoinId()).get(Currency.USD);
-                ZonedDateTime date = doubleToZDT(newCoin.get(coin.getCoinId()).get("last_updated_at"));
-
-
-                System.out.println(coinPrice + "      " + date);
+                String date = doubleToDate(newCoin.get(coin.getCoinId()).get("last_updated_at"));
+                System.out.println("Coin: " + coin.getCoinName() + " - Price: " + coinPrice + " - Date: " + date);
 
                 Market market = new Market(coin, coinPrice, date);
-
                 CryptoRepository.newMarketValue(market);
             }
 
             client.shutdown();
-/*
-            String ids = "ethereum";
-            Map<String, Map<String, Double>> bitcoin = client.getPrice(ids, Currency.USD, true, true, true, true);
-
-            System.out.println(bitcoin);
-
-
-            Double lastUpdatedAt = bitcoin.get(ids).get("last_updated_at");
-
-*/
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
 
-
+    private String doubleToDate(Double date) {
+        ZonedDateTime zdt = doubleToZDT(date);
+        String d = zdt.toString();
+        d = d.replace("T", " ");
+        d = d.replace("Z", "");
+        return d;
     }
 
 
-    private ZonedDateTime doubleToZDT(Double date){
-        DecimalFormat df = new DecimalFormat("#");
-        df.setMaximumFractionDigits(0);
-        System.out.println(df.format(date));
-
-        long epoch = Long.parseLong(df.format(date));
+    private ZonedDateTime doubleToZDT(Double date) {
+        Long epoch = convertDoubleToLOng(date);
         Instant instant = Instant.ofEpochSecond(epoch);
         return ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
+    }
+
+    private Long convertDoubleToLOng(Double d) {
+        DecimalFormat df = new DecimalFormat("#");
+        df.setMaximumFractionDigits(0);
+        return Long.parseLong(df.format(d));
     }
 
 

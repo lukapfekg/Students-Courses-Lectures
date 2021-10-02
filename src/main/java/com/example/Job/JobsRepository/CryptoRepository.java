@@ -3,7 +3,6 @@ package com.example.Job.JobsRepository;
 import com.example.Crypto.Model.Coin;
 import com.example.Crypto.Model.Market;
 import com.example.StudentsCoursesLectures.Model.DBParameters;
-import com.example.StudentsCoursesLectures.Model.Student;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -30,15 +29,14 @@ public class CryptoRepository {
         }
     }
 
-    public static void newMarketValue(Market market) throws SQLException{
+    public static void newMarketValue(Market market) throws SQLException {
         try (Connection connection = DriverManager.getConnection(connectionString, username, password)) {
 
-            String query = "INSERT INTO crypto.market_history VALUES (DEFAULT, '" + market.getCoin().getCoinId() + "', " + market.getPrice() + ", " + market.getDate() + ")";
+            String query = "INSERT INTO crypto.market_history VALUES (DEFAULT, '" + market.getCoin().getCoinId() + "', " + market.getPrice() + ", '" + market.getDate() + "')";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.execute();
         }
     }
-
 
 
 }

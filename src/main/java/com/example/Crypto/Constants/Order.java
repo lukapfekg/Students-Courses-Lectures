@@ -1,6 +1,6 @@
 package com.example.Crypto.Constants;
 
-public class Order {
+public final class Order {
     public static String GECKO_ASC = "gecko_asc";
     public static String GECKO_DESC = "gecko_desc";
     public static String MARKET_CAP_ASC = "market_cap_asc";

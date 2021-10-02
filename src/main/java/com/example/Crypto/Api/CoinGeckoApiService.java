@@ -29,21 +29,5 @@ public interface CoinGeckoApiService {
 
     @GET("simple/supported_vs_currencies")
     Call<List<String>> getSupportedVsCurrencies();
-/*
-    @GET("coins/list")
-    Call<List<CoinList>> getCoinList();
 
-    @GET("coins/markets")
-    Call<List<CoinMarkets>> getCoinMarkets(@Query("vs_currency") String vsCurrency, @Query("ids") String ids,
-                                           @Query("order") String order, @Query("per_page") Integer perPage,
-                                           @Query("page") Integer page, @Query("sparkline") boolean sparkline,
-                                           @Query("price_change_percentage") String priceChangePercentage);
-
-    @GET("coins/{id}")
-    Call<CoinFullData> getCoinById(@Path("id") String id, @Query("localization") boolean localization, @Query("tickers") boolean tickers,
-                                   @Query("market_data") boolean marketData, @Query("community_data") boolean communityData,
-                                   @Query("developer_data") boolean developerData, @Query("sparkline") boolean sparkline);
-
-
- */
 }

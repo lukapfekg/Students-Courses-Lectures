@@ -49,8 +49,16 @@ CREATE TABLE crypto.coins
 );
 CREATE TABLE crypto.market_history
 (
-    id      SERIAL PRIMARY KEY,
-    coin_id VARCHAR(100) NOT NULL,
-    coin_value FLOAT NOT NULL ,
-    date DATE NOT NULL
+    id         SERIAL PRIMARY KEY,
+    coin_id    VARCHAR(100) NOT NULL,
+    coin_value FLOAT        NOT NULL,
+    date       VARCHAR(100) NOT NULL
 );
+INSERT INTO crypto.coins
+VALUES (DEFAULT, 'bitcoin', 'Bitcoin', 'btc');
+INSERT INTO crypto.coins
+VALUES (DEFAULT, 'ethereum', 'Ethereum', 'eth');
+INSERT INTO crypto.coins
+VALUES (DEFAULT, 'ripple', 'XRP', 'xrp');
+INSERT INTO crypto.coins
+VALUES (DEFAULT, 'dogecoin', 'Dogecoin', 'doge');

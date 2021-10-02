@@ -13,14 +13,14 @@ import java.lang.annotation.Annotation;
 public class CoinGeckoApi {
     private final String API_BASE_URL = "https://api.coingecko.com/api/v3/";
 
-    private OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+    private final OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
 
-    private Retrofit.Builder builder = new Retrofit.Builder()
+    private final Retrofit.Builder builder = new Retrofit.Builder()
             .baseUrl(API_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(JacksonConverterFactory.create());
 
-    private Retrofit retrofit = builder.build();
+    private final Retrofit retrofit = builder.build();
 
     public <S> S createService(Class<S> serviceClass) {
         return retrofit.create(serviceClass);
@@ -56,4 +56,5 @@ public class CoinGeckoApi {
                 .convert(response.errorBody());
 
     }
+
 }

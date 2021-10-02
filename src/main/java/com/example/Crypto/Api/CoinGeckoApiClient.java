@@ -21,19 +21,6 @@ public interface CoinGeckoApiClient {
 
     List<String> getSupportedVsCurrencies();
 
-    /*
-        List<CoinList> getCoinList();
-
-        List<CoinMarkets> getCoinMarkets(String vsCurrency);
-
-        List<CoinMarkets> getCoinMarkets(String vsCurrency,  String ids, String order,  Integer perPage, Integer page,  boolean sparkline, String priceChangePercentage);
-
-        CoinFullData getCoinById(String id);
-
-        CoinFullData getCoinById(String id, boolean localization, boolean tickers, boolean marketData, boolean communityData, boolean developerData, boolean sparkline);
-
-    */
     void shutdown();
-
 
 }
