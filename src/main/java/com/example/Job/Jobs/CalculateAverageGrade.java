@@ -1,7 +1,7 @@
 package com.example.Job.Jobs;
 
 import com.example.StudentsCoursesLectures.Model.Student;
-import com.example.Job.JobsRepository.AverageGradesRepository;
+import com.example.Job.Repository.AverageGradesRepository;
 import com.example.StudentsCoursesLectures.Services.StudentService;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

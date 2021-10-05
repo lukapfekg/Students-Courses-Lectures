@@ -1,4 +1,4 @@
-package com.example.Job.JobsRepository;
+package com.example.Job.Repository;
 
 import com.example.Crypto.Model.Coin;
 import com.example.Crypto.Model.Market;

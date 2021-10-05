@@ -1,4 +1,4 @@
-package com.example.Job.Jobs;
+package com.example.Crypto.Service;
 
 import com.example.Crypto.Api.CoinGeckoApiClient;
 import com.example.Crypto.Constants.Currency;
@@ -6,22 +6,25 @@ import com.example.Crypto.Implementation.CoinGeckoApiClientImpl;
 import com.example.Crypto.Model.Coin;
 import com.example.Crypto.Model.Market;
 import com.example.Job.Repository.CryptoRepository;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GetCryptoValue implements Job {
+@Service
+public class CryptoService {
 
+    @Cacheable("cryptos")
+    public List<Market> getNewPrices() {
+        List<Market> markets = new ArrayList<>();
 
-    @Override
-    public void execute(JobExecutionContext jobExecutionContext) {
         try {
             List<Coin> coins = CryptoRepository.getCoins();
             CoinGeckoApiClient client = new CoinGeckoApiClientImpl();
@@ -32,15 +35,19 @@ public class GetCryptoValue implements Job {
                 String date = doubleToDate(newCoin.get(coin.getCoinId()).get("last_updated_at"));
                 System.out.println("Coin: " + coin.getCoinName() + " - Price: " + coinPrice + " - Date: " + date);
 
-                Market market = new Market(coin, coinPrice, date);
-                CryptoRepository.newMarketValue(market);
+                markets.add(new Market(coin, coinPrice, date));
+
             }
 
             client.shutdown();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+
+        return markets;
     }
+
 
     private String doubleToDate(Double date) {
         ZonedDateTime zdt = doubleToZDT(date);
@@ -62,8 +69,4 @@ public class GetCryptoValue implements Job {
         df.setMaximumFractionDigits(0);
         return Long.parseLong(df.format(d));
     }
-
-
-
-
 }

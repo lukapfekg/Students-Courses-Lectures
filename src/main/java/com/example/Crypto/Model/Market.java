@@ -13,4 +13,5 @@ public class Market {
         this.price = coinPrice;
         this.date = date;
     }
+
 }
