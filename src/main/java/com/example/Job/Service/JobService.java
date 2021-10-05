@@ -7,15 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PlaygroundService {
-    private final SchedulerService scheduler;
+public class JobService {
+    private static SchedulerService scheduler;
 
     @Autowired
-    public PlaygroundService(final SchedulerService scheduler) {
-        this.scheduler = scheduler;
+    public JobService(final SchedulerService scheduler) {
+        JobService.scheduler = scheduler;
     }
 
-    public void runAverageGradeJob() {
+    public static void runAverageGradeJob() {
         final TimerInfo info = new TimerInfo();
         info.setRunForever(true);
         info.setRepeatIntervalMs(10000);
@@ -24,7 +24,7 @@ public class PlaygroundService {
         scheduler.schedule(CalculateAverageGrade.class, info);
     }
 
-    public void runGetCryptoValue() {
+    public static void runGetCryptoValue() {
         final TimerInfo info = new TimerInfo();
         info.setRunForever(true);
         info.setRepeatIntervalMs(10000);
