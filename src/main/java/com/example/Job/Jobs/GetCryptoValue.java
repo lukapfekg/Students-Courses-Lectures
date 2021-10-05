@@ -3,9 +3,9 @@ package com.example.Job.Jobs;
 import com.example.Crypto.Api.CoinGeckoApiClient;
 import com.example.Crypto.Constants.Currency;
 import com.example.Crypto.Implementation.CoinGeckoApiClientImpl;
-import com.example.Crypto.Model.Coin;
-import com.example.Crypto.Model.Market;
-import com.example.Job.Repository.CryptoRepository;
+import com.example.Crypto.MVC.Model.Coin;
+import com.example.Crypto.MVC.Model.Market;
+import com.example.Crypto.MVC.Repository.CryptoRepository;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 

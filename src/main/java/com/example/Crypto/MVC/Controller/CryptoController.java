@@ -1,13 +1,12 @@
-package com.example.Crypto.Controller;
+package com.example.Crypto.MVC.Controller;
 
-import com.example.Crypto.Model.Market;
-import com.example.Crypto.Service.CryptoService;
+import com.example.Crypto.MVC.Model.Market;
+import com.example.Crypto.MVC.Service.CryptoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.SQLException;
 import java.util.List;
 
 @RestController

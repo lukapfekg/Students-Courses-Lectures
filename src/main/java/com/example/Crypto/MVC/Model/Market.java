@@ -1,4 +1,4 @@
-package com.example.Crypto.Model;
+package com.example.Crypto.MVC.Model;
 
 import lombok.Data;
 

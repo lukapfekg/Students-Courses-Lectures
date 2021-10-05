@@ -1,7 +1,7 @@
-package com.example.Job.Repository;
+package com.example.Crypto.MVC.Repository;
 
-import com.example.Crypto.Model.Coin;
-import com.example.Crypto.Model.Market;
+import com.example.Crypto.MVC.Model.Coin;
+import com.example.Crypto.MVC.Model.Market;
 import com.example.StudentsCoursesLectures.Model.DBParameters;
 
 import java.sql.*;
